@@ -1,0 +1,189 @@
+<% content_for :bar do %>
+    <a href="/users/<%= current_user.id %>/edit"><span class="glyphicon glyphicon-user"></span>Edit My Profile</a>
+<% end %>
+
+<div class="row">
+    <div class="row">
+        <h3>Here are some of the event at your state</h3>
+        <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Location</th>
+            <th>Host</th>
+            <th>Action/Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @instate_events.each do |event| %>
+            <tr>
+            <td><a href="/events/<%= event.id %>"><%= event.name %></a></td>
+            <td><%= event.date %></td>
+            <td><%= event.city %></td>
+            <td><%= event.user.first_name %> <%= event.user.last_name %></td>
+            <td>
+                <% if event.user == current_user %>
+                <a class="btn btn-default" href="/events/<%= event.id %>/edit">Edit</a>
+                <form class="visible-lg-inline-block" action="/events/<%= event.id %>" method="post">
+                    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                    <input type="hidden" name="_method" value="delete">
+                    <input class="btn btn-default"type='submit' value='Delete'>
+                </form>              
+
+                <% elsif event.attend_users.include?(current_user) %>
+                <span>Joining</span>
+                <form class="visible-lg-inline-block" action="/attends/<%= Attend.where(user: current_user, event: event).first.id %>" method="post">
+                    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                    <input type="hidden" name="_method" value="delete">
+                    <input class="btn btn-default" type='submit' value='Cancel'>
+                </form>
+
+                <% else %>
+                <form action="/attends" method="post">
+                    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                    <input type="hidden" name="event_id" value="<%= event.id %>">
+                    <input class="btn btn-default " type='submit' value='Join'>
+                </form>
+                
+                <% end %>
+
+            </td>
+            </tr>
+            <% end %>
+            
+        </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <h3>Here are some of the event on other state</h3>
+        <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>State</th>
+                    <th>Host</th>
+                    <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% @outstate_events.each do |event| %>
+                    <tr>
+                    <td><a href="/events/<%= event.id %>"><%= event.name %></a></td>
+                    <td><%= event.date %></td>
+                    <td><%= event.city %></td>
+                    <td><%= event.state %></td>
+                    <td><%= event.user.first_name %> <%= event.user.last_name %></td>
+                    <td>
+                        <% if event.user == current_user %>
+                        <a class="btn btn-default visible-lg-inline-block" href="/events/<%= event.id %>/edit">Edit</a>
+                        <form class="visible-lg-inline-block" action="/events/<%= event.id %>" method="post">
+                            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                            <input type="hidden" name="_method" value="delete">
+                            <input class="btn btn-default"type='submit' value='Delete'>
+                        </form>              
+        
+                        <% elsif event.attend_users.include?(current_user) %>
+                        <span>Joining</span>
+                        <form class="visible-lg-inline-block" action="/attends/<%= Attend.where(user: current_user, event: event).first.id %>" method="post">
+                            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                            <input type="hidden" name="_method" value="delete">
+                            <input class="btn btn-default" type='submit' value='Cancel'>
+                        </form>
+        
+                        <% else %>
+                        <form action="/attends" method="post">
+                            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                            <input type="hidden" name="event_id" value="<%= event.id %>">
+                            <input class="btn btn-default " type='submit' value='Join'>
+                        </form>
+                            
+                        <% end %>
+            
+                    </td>
+                    </tr>
+                    <% end %>           
+                </tbody>
+                </table>
+            
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+        <h3>Add Event</h3>
+        <form action="/events" method="post">
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" name="event[name]">
+            </div>
+            <div class="form-group">
+                <label for="name">Date:</label>
+                <input type="date" class="form-control" id="name" name="event[date]">
+            </div>
+            <div class="form-group">
+                <label>Location:</label>
+                <input type="text" class="form-control" id="city" name="event[city]">
+                <select  class="form-control" name="event[state]">
+                        <option value="AL">AL</option>
+                        <option value="AK">AK</option>
+                        <option value="AR">AR</option>	
+                        <option value="AZ">AZ</option>
+                        <option value="CA">CA</option>
+                        <option value="CO">CO</option>
+                        <option value="CT">CT</option>
+                        <option value="DC">DC</option>
+                        <option value="DE">DE</option>
+                        <option value="FL">FL</option>
+                        <option value="GA">GA</option>
+                        <option value="HI">HI</option>
+                        <option value="IA">IA</option>	
+                        <option value="ID">ID</option>
+                        <option value="IL">IL</option>
+                        <option value="IN">IN</option>
+                        <option value="KS">KS</option>
+                        <option value="KY">KY</option>
+                        <option value="LA">LA</option>
+                        <option value="MA">MA</option>
+                        <option value="MD">MD</option>
+                        <option value="ME">ME</option>
+                        <option value="MI">MI</option>
+                        <option value="MN">MN</option>
+                        <option value="MO">MO</option>	
+                        <option value="MS">MS</option>
+                        <option value="MT">MT</option>
+                        <option value="NC">NC</option>	
+                        <option value="NE">NE</option>
+                        <option value="NH">NH</option>
+                        <option value="NJ">NJ</option>
+                        <option value="NM">NM</option>			
+                        <option value="NV">NV</option>
+                        <option value="NY">NY</option>
+                        <option value="ND">ND</option>
+                        <option value="OH">OH</option>
+                        <option value="OK">OK</option>
+                        <option value="OR">OR</option>
+                        <option value="PA">PA</option>
+                        <option value="RI">RI</option>
+                        <option value="SC">SC</option>
+                        <option value="SD">SD</option>
+                        <option value="TN">TN</option>
+                        <option value="TX">TX</option>
+                        <option value="UT">UT</option>
+                        <option value="VT">VT</option>
+                        <option value="VA">VA</option>
+                        <option value="WA">WA</option>
+                        <option value="WI">WI</option>	
+                        <option value="WV">WV</option>
+                        <option value="WY">WY</option>
+                </select>		
+            </div>
+            
+
+            <input type="submit" class="btn btn-default" value="Add Event">        
+        </form>
+        </div>        
+    </div>
+
+</div>
